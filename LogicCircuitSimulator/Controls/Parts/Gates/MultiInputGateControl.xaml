@@ -1,0 +1,56 @@
+﻿<UserControl x:Name="Root"
+    x:Class="LogicCircuitSimulator.MultiInputGateControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+	Width="{Binding Width}"
+	Height="{Binding Height}"
+    d:DesignHeight="100"
+    d:DesignWidth="125">
+
+	<UserControl.Resources>
+		<local:FalsePositiveBrushConverter x:Key="FalsePositiveBrushConverter"/>
+		<local:FocusStateToBorderBrushConverter x:Key="BorderBrushConverter"/>
+		<local:MutliInputGatePathConverter x:Key="PathConverter"/>
+	</UserControl.Resources>
+
+
+	<Canvas Background="Transparent">
+
+		<local:MultiInputSocketControl
+			InputCollection="{Binding Inputs}"
+			Canvas.Top="20"
+			Canvas.Left="7.5"
+			DifferentiateWireLengths="{Binding DifferentiateInputWireLengths, Mode=OneWay}"
+			/>
+
+		<!-- Wire to output socket-->
+		<Border Background="{Binding Output.Value, Converter={StaticResource FalsePositiveBrushConverter}}"
+			BorderBrush="{StaticResource BlackBrush}"
+			BorderThickness="1"
+			Height="5"
+			Width="15"					
+			Canvas.Top="{Binding OutputXCoord}"
+			Canvas.Left="100"
+			Margin="0 -2.5 0 0"/>
+
+		<!-- Gate's body -->
+		<Path StrokeThickness="5"
+			Stroke="{StaticResource BlackBrush}"
+			Data="{Binding PartBodyBinding, Converter={StaticResource PathConverter}}" />
+
+		<!-- Output Socket -->
+		<Border Canvas.Top="{Binding OutputXCoord}"
+			Canvas.Left="107.5"
+			Margin="0 -5 0 0">
+			<local:SocketControl DataContext="{Binding Output}"/>
+		</Border>
+
+	</Canvas>
+
+
+
+</UserControl>

@@ -1,0 +1,54 @@
+﻿<UserControl
+    x:Class="LogicCircuitSimulator.MultiInputGateEdit"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+	<StackPanel>
+
+		<!-- Number of inputs header -->
+		<TextBlock Text="{Binding Header, Mode=OneTime}"
+			Style="{StaticResource WhiteTextBlockStyle}"
+			FontSize="{StaticResource FontSizeBig}"
+			Margin="0 5 0 5"/>
+
+		<!-- Dummy TextBox to catch autofocus -->
+		<TextBox Style="{StaticResource DummyTextBox}"/>
+
+		<!-- Number of inputs textbox -->
+		<TextBox Text="{Binding NumberOfInputs, Mode=TwoWay}"
+			Style="{StaticResource SideMenuTextBoxStyleUnder8}"
+			MaxLength="2"/>
+
+		<!-- Grid for Add/Remove inputs button -->
+		<Grid Margin="0 5 0 0">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Add input button -->
+			<Button Style="{StaticResource StandardSideMenuButtonStyle}"
+				IsEnabled="{Binding EnableAddButton, Mode=OneWay}"
+				Content="{Binding AddInputButtonText, Mode=OneTime}"
+				Margin="0 0 5 0"
+				Command="{Binding AddInputCommand}"/>
+
+			<!-- Remove input button -->
+			<Button Style="{StaticResource StandardSideMenuButtonStyle}"
+				IsEnabled="{Binding EnableRemoveButton, Mode=OneWay}"
+				Content="{Binding RemoveInputButtonText, Mode=OneTime}"
+				Margin="5 0 0 0"
+				Command="{Binding RemoveInputCommand}"
+				Grid.Column="1"/>
+
+		</Grid>
+
+	</StackPanel>
+</UserControl>

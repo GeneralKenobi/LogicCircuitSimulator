@@ -1,0 +1,59 @@
+﻿<UserControl x:Name="Root"
+    x:Class="LogicCircuitSimulator.WireControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+	Tapped="WireTapped"
+	Background="Transparent">
+
+	<UserControl.Resources>
+		<local:BoolToVisibilityConverter x:Key="VisibilityConverter"/>
+		<local:FalsePositiveBrushConverter x:Key="FalsePositiveBrushConverter"/>
+		<local:CoordsToPathDataConverter x:Key="PathDataConverter"/>
+		<local:CoordsToWireBorderPathDataConverter x:Key="BorderConverter"/>		
+	</UserControl.Resources>
+
+	<UserControl.ContextFlyout>
+		<MenuFlyout Opening="MenuFlyoutOpenClose"
+			Closed="MenuFlyoutOpenClose"
+			MenuFlyoutPresenterStyle="{StaticResource MenuFlyoutPresenterStyle}">			
+			<MenuFlyoutItem Style="{StaticResource ContextMenuFlyoutItemStyle}"
+				Text="&#xE107;"
+				FontFamily="{StaticResource SymbolThemeFontFamily}"
+				Command="{Binding RemoveCommand}"
+				CommandParameter="{Binding}"/>
+		</MenuFlyout>
+	</UserControl.ContextFlyout>
+
+	<!-- Border around the 'focused' element -->
+	<Canvas>
+
+		<!-- Outer black part -->
+		<Path StrokeThickness="5"
+		Stroke="{StaticResource BlackBrush}"
+		Data="{Binding Coords, Converter={StaticResource PathDataConverter}}"/>
+
+		<!-- Inner part, green when wire is 'on' -->
+		<Path StrokeThickness="3"
+			Stroke="{Binding State.Value, Converter={StaticResource FalsePositiveBrushConverter}}"
+			Data="{Binding Coords, Converter={StaticResource PathDataConverter}}"/>
+
+		<!-- Border when focused -->
+		<Path x:Name="Border"
+			StrokeThickness="1"
+			Stroke="{x:Bind MenuPresentBorderBrush, Mode=OneWay}"
+			Data="{Binding Coords, Converter={StaticResource BorderConverter}}"/>
+
+		<local:WireSocketControl DataContext="{Binding State}"			
+			Coord="{Binding DataContext.FirstSocketCoord, Mode=OneWay, ElementName=Root}"
+			IsFirstSocket="True"/>
+				
+		<local:WireSocketControl DataContext="{Binding State}"
+			Coord="{Binding DataContext.SecondSocketCoord, Mode=OneWay, ElementName=Root}"
+			Visibility="{Binding DataContext.SecondSocketVisible, Mode=OneWay, ElementName=Root, Converter={StaticResource VisibilityConverter}}"/>
+		
+	</Canvas>
+</UserControl>

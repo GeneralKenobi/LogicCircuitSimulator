@@ -1,0 +1,33 @@
+﻿<UserControl x:Name="Root"
+    x:Class="LogicCircuitSimulator.WireSocketControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+	Tapped="SocketTapped"
+    d:DesignHeight="10"
+    d:DesignWidth="10"
+	Width="{Binding Length}"
+	Height="{Binding Length}"
+	Canvas.Left="{x:Bind Coord.X, Mode=OneWay}"
+	Canvas.Top="{x:Bind Coord.Y, Mode=OneWay}">
+
+	<UserControl.Resources>
+		<local:SocketBackgroundConverter x:Key="BackgroundConverter"/>
+		<local:BoolToVisibilityConverter x:Key="VisibilityConverter"/>
+	</UserControl.Resources>
+
+	<Grid Margin="-10 -10 0 0"
+		Width="{Binding Length}"
+		Height="{Binding Length}">
+
+		<Ellipse Fill="{StaticResource BlackBrush}"/>
+		<Ellipse Margin="1"
+			Fill="{Binding SocketState, Converter={StaticResource BackgroundConverter}}"/>
+
+	</Grid>
+
+
+</UserControl>

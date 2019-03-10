@@ -1,0 +1,172 @@
+﻿<UserControl
+    x:Class="LogicCircuitSimulator.ToggleInputControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+	xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+	xmlns:Animations="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
+	xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+	Height="{Binding Height}"
+    d:DesignHeight="25"
+    d:DesignWidth="75">
+
+	<UserControl.Resources>
+		<local:FalsePositiveBrushConverter x:Key="FalsePositiveBrushConverter"/>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<!-- Button -->
+			<ColumnDefinition Width="60"/>
+			<!-- Wire -->
+			<ColumnDefinition Width="30"/>
+		</Grid.ColumnDefinitions>
+
+		<!-- Black background -->
+		<Border Background="{StaticResource BlackBrush}"
+			CornerRadius="8">
+
+			<!-- Green/Red inner background (depends
+			on the state) -->
+			<Border Background="{StaticResource DarkRedBrush}"
+				CornerRadius="8"
+				Margin="3"
+				x:Name="OnOffBackground">
+
+				<!-- Color animations for the background -->
+				<Border.Resources>
+
+					<!-- Changes internal background color to green -->
+					<Storyboard x:Name="ColorToGreen">
+						<ColorAnimation Duration="0:0:0.4"
+							To="{StaticResource Green}"
+							Storyboard.TargetName="OnOffBackground"
+							Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)">
+							<ColorAnimation.EasingFunction>
+								<SineEase/>
+							</ColorAnimation.EasingFunction>	
+						</ColorAnimation>
+					</Storyboard>
+
+					<!-- Changes internal background color to red -->
+					<Storyboard x:Name="ColorToRed">
+						<ColorAnimation Duration="0:0:0.4"
+							To="{StaticResource DarkRed}"
+							Storyboard.TargetName="OnOffBackground"
+							Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)">
+							<ColorAnimation.EasingFunction>
+								<SineEase/>
+							</ColorAnimation.EasingFunction>
+							</ColorAnimation>
+					</Storyboard>
+				</Border.Resources>
+
+				<!-- Triggers -->
+				<Interactivity:Interaction.Behaviors>
+
+					<!-- Pointer Released trigger: invokes ChangeStateCommand -->
+					<Core:EventTriggerBehavior EventName="Tapped">
+						<Core:InvokeCommandAction Command="{Binding ChangeStateCommand}"/>
+					</Core:EventTriggerBehavior>
+
+					<!-- Trigger for when the input is turned on:
+					Changes background color to green and moves the button to the right -->
+					<Core:DataTriggerBehavior Binding="{Binding Output.Value}"
+						Value="True">
+						<Media:ControlStoryboardAction Storyboard="{Binding ElementName=ColorToGreen}"/>
+						<Media:ControlStoryboardAction Storyboard="{Binding ElementName=TextToOn}"/>
+						<Core:CallMethodAction MethodName="StartAnimation"
+							TargetObject="{x:Bind MoveButtonToRight}"/>
+					</Core:DataTriggerBehavior>
+
+					<!-- Trigger for when the input is turned on:
+					Changes background color to red and moves the button to the left -->
+					<Core:DataTriggerBehavior Binding="{Binding Output.Value}"
+						Value="False">
+						<Media:ControlStoryboardAction Storyboard="{Binding ElementName=ColorToRed}"/>
+						<Media:ControlStoryboardAction Storyboard="{Binding ElementName=TextToOff}"/>
+						<Core:CallMethodAction MethodName="StartAnimation"
+							TargetObject="{x:Bind MoveButtonToLeft}"/>
+					</Core:DataTriggerBehavior>
+				</Interactivity:Interaction.Behaviors>
+
+				<!-- Button's gray background -->
+				<Border Background="{StaticResource GrayBrush}"
+					CornerRadius="8"
+					Width="38"
+					HorizontalAlignment="Left">
+
+					<!-- On/Off text (depends on the state) -->
+					<TextBlock x:Name="OnOffTextBlock"
+						Foreground="{StaticResource BlackBrush}"
+						FontFamily="{StaticResource LatoThin}"
+						Text="Off"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+
+						<!-- Animations changing the text to "Off"/"On" -->
+						<TextBlock.Resources>
+
+							<!-- Storyboard changing the text to "Off"-->
+							<Storyboard x:Name="TextToOff">
+								<ObjectAnimationUsingKeyFrames Storyboard.TargetName="OnOffTextBlock"
+									Storyboard.TargetProperty="Text">
+									<DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="Off"/>
+								</ObjectAnimationUsingKeyFrames>
+							</Storyboard>
+
+							<!-- Storyboard changing the text to "On"-->
+							<Storyboard x:Name="TextToOn">
+								<ObjectAnimationUsingKeyFrames Storyboard.TargetName="OnOffTextBlock"
+									Storyboard.TargetProperty="Text">
+									<DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="On"/>
+								</ObjectAnimationUsingKeyFrames>
+							</Storyboard>
+						</TextBlock.Resources>
+						
+					</TextBlock>
+
+					<!-- Animations sliding the button -->
+					<Interactivity:Interaction.Behaviors>
+
+						<!-- Moves the button to the right -->
+						<Animations:Offset OffsetX="16"
+							Duration="300"
+							AutomaticallyStart="False"
+							x:Name="MoveButtonToRight"/>
+
+						<!-- Moves the button to the left -->
+						<Animations:Offset OffsetX="0"
+							Duration="300"
+							AutomaticallyStart="False"
+							x:Name="MoveButtonToLeft"/>
+
+					</Interactivity:Interaction.Behaviors>
+
+				</Border>
+
+			</Border>
+		</Border>
+
+		<Canvas Grid.Column="1">
+		
+			<!-- Border which acts as the wire -->
+			<Border	Height="5"
+				Width="15"
+				Canvas.Top="10"
+				Background="{Binding Output.Value, Converter={StaticResource FalsePositiveBrushConverter}}"
+				BorderThickness="0 1 1 1"
+				BorderBrush="{StaticResource BlackBrush}"/>
+
+			<!-- Output socket -->
+			<local:SocketControl DataContext="{Binding Output}"
+				Canvas.Top="7.5"
+				Canvas.Left="10"/>
+		</Canvas>
+	</Grid>
+
+</UserControl>

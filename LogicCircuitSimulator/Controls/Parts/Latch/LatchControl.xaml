@@ -1,0 +1,207 @@
+﻿<UserControl
+    x:Class="LogicCircuitSimulator.LatchControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LogicCircuitSimulator"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="150"
+    d:DesignWidth="100"
+	Height="210"
+	Width="160">
+
+	<UserControl.Resources>
+		<local:BoolToVisibilityConverter x:Key="VisibilityConverter"/>
+		<local:ClockTypeToVisibilityConverter x:Key="ClockEdgeVisibilityConverter"/>
+	</UserControl.Resources>
+
+
+	<!-- Main container -->
+	<Grid Background="Transparent">
+
+		<Grid.RowDefinitions>
+			<!-- Set wire -->
+			<RowDefinition Height="25"/>
+			<!-- Separator row -->
+			<RowDefinition Height="5"/>
+			<!-- First input, output -->
+			<RowDefinition Height="50"/>
+			<!-- Clock -->
+			<RowDefinition Height="50"/>
+			<!-- Second input, output -->
+			<RowDefinition Height="50"/>
+			<!-- Reset wire -->
+			<RowDefinition Height="5"/>
+			<!-- Separator row -->
+			<RowDefinition Height="25"/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<!-- Input wires -->
+			<ColumnDefinition Width="25"/>
+			<!-- Input labels -->
+			<ColumnDefinition Width="20"/>
+			<!-- Clock label -->
+			<ColumnDefinition Width="70"/>
+			<!-- Output labels, asynchronous wires -->
+			<ColumnDefinition Width="20"/>
+			<!-- Output wires -->
+			<ColumnDefinition Width="25"/>
+		</Grid.ColumnDefinitions>
+
+			
+
+		<!-- Set label -->
+		<local:LatchLabel Label="{Binding SetLabel, Mode=OneWay}"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Top"
+			Margin="0 5 0 0"
+			ShowNegation="{Binding NegateSet, Mode=OneWay}"
+			Grid.Row="2"
+			Grid.Column="2"/>	
+
+		<!-- Set wire + socket -->
+		<local:SocketWithWireControl SocketPosition="Top"
+			Socket="{Binding Set, Mode=OneWay}"
+			Grid.Row="0"			
+			Grid.Column="2"
+			AddNegation="{Binding NegateSet, Mode=OneWay}"/>
+
+
+
+		<!-- Reset label -->
+		<local:LatchLabel Label="{Binding ResetLabel, Mode=OneWay}"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Bottom"
+			Margin="0 0 0 -2"
+			ShowNegation="{Binding NegateReset, Mode=OneWay}"
+			Grid.Row="4"
+			Grid.Column="2"/>
+
+		<!-- Reset wire + socket -->
+		<local:SocketWithWireControl SocketPosition="Bottom"
+			Socket="{Binding Reset, Mode=OneWay}"
+			Grid.Row="6"
+			Grid.Column="2"
+			AddNegation="{Binding NegateReset, Mode=OneWay}"/>
+
+
+
+		<!-- First input label -->
+		<local:LatchLabel Label="{Binding InputLabel, Mode=OneWay}"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Center"
+			Margin="0 5 0 0"
+			ShowNegation="False"
+			Grid.Row="2"
+			Grid.Column="1"/>
+
+		<!-- First input wire -->
+		<local:SocketWithWireControl Grid.Row="2"
+			VerticalAlignment="Center"
+			Socket="{Binding Input, Mode=OneWay}"
+			SocketPosition="Left"/>
+
+
+		<StackPanel Orientation="Horizontal"
+			Grid.Row="3"
+			Grid.ColumnSpan="2"
+			Grid.Column="1">
+
+			<!-- Rising edge triangle -->
+			<Polyline Stroke="{StaticResource BlackBrush}"
+					Grid.Row="3"
+					Grid.Column="1"
+					StrokeThickness="1"
+					Points="1,16 15,8.25 1,0"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Visibility="{Binding ClockType, Mode=OneWay, Converter={StaticResource ClockEdgeVisibilityConverter}}"/>
+		
+		
+		<!-- Clock label -->
+			<local:LatchLabel Label="{Binding ClockLabel, Mode=OneWay}"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				ShowNegation="{Binding NegateClock, Mode=OneWay}"
+				Grid.Row="3"
+				Grid.Column="2"
+				Margin="8 3 0 0"/>
+
+		</StackPanel>
+
+		<!-- Clock wire -->
+		<local:SocketWithWireControl Grid.Row="3"
+			VerticalAlignment="Center"
+			AddNegation="{Binding NegateClock, Mode=OneWay}"
+			Socket="{Binding Clock, Mode=OneWay}"
+			SocketPosition="Left"/>
+
+
+
+		<!-- Second input label -->
+		<local:LatchLabel Label="{Binding SecondInputLabel, Mode=OneWay}"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Right"
+				Margin="0 5 0 0"
+				ShowNegation="False"
+				Grid.Row="4"
+				Grid.Column="1"
+				Visibility="{Binding IsSingleInput, Mode=OneWay, Converter={StaticResource VisibilityConverter}, ConverterParameter=true}"/>
+
+		<!-- Second input wire -->
+		<local:SocketWithWireControl Grid.Row="4"
+			VerticalAlignment="Center"
+			Socket="{Binding SecondInput, Mode=OneWay}"
+			SocketPosition="Left"
+			Visibility="{Binding IsSingleInput, Mode=OneWay, Converter={StaticResource VisibilityConverter}, ConverterParameter=true}"/>
+
+
+
+		<!-- Q label -->
+		<local:LatchLabel Label="{Binding OutputLabel, Mode=OneWay}"
+				Grid.Row="2"
+				Grid.Column="3"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				Margin="0 5 0 0"/>
+
+		<!-- Q wire -->
+		<local:SocketWithWireControl Grid.Row="2"
+			Grid.Column="4"
+			VerticalAlignment="Center"
+			Socket="{Binding Q, Mode=OneWay}"
+			SocketPosition="Right"/>
+
+
+		<!-- Complemented Q label -->
+		<local:LatchLabel Label="{Binding OutputLabel, Mode=OneWay}"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				Margin="0 5 0 0"
+				ShowNegation="True"
+				Grid.Row="4"
+				Grid.Column="3"/>
+
+		<!-- Complemented Q wire -->
+		<local:SocketWithWireControl Grid.Row="4"
+			Grid.Column="4"
+			VerticalAlignment="Center"
+			AddNegation="True"
+			Socket="{Binding QComplement, Mode=OneWay}"
+			SocketPosition="Right"/>
+
+		<!-- Black outline -->
+		<Border BorderBrush="{StaticResource BlackBrush}"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Grid.Row="1"
+			Grid.Column="1"
+			Grid.RowSpan="5"
+			Grid.ColumnSpan="3"
+			BorderThickness="2"/>
+
+	</Grid>
+
+</UserControl>
